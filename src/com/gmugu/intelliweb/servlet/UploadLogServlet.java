@@ -27,19 +27,33 @@ public class UploadLogServlet extends HttpServlet {
         Result result=new Result();
         PrintWriter out = resp.getWriter();
         String[] lockMac = req.getParameterValues("lockMac");
+        String[] events = req.getParameterValues("event");
         if (lockMac == null || lockMac.length != 1) {
             result.code = -1;
-            result.msg = "è¯·æ±‚å‚æ•°lockMacä¸å­˜åœ¨";
+            result.msg = "ÇëÇó²ÎÊılockMac²»´æÔÚ";
             out.println(new Gson().toJson(result));
             out.close();
             return;
         }
         String mac = lockMac[0];
+
+        System.out.println("UploadLogServlet  lockMac:"+mac+"  "+events[0]);
+
         LogBean entity = new LogBean();
         entity.setEvent("unlock");
+
+
+        if (events[0] != null) {
+            if (events[0].equals("0")) {
+                entity.setEvent("Êı×Ö¼üÅÌ½âËø");
+            } else if (events[0].equals("1")) {
+                entity.setEvent("ÒÆ¶¯Éè±¸½âËø");
+            }
+        }
         entity.setTime(System.currentTimeMillis());
         entity.setLockMac(mac);
         logDao.save(entity);
+        out.close();
     }
 
 }
